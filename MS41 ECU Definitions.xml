@@ -1783,26 +1783,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 		<description>IP_ISAPWM_LGRD__N_32 - These values are used to soften the torque reduction when the Throttle is closed. Smaller values result in a more gradual closure of the IACV and therefore a softer torque reduction.</description>
 	</table>
 
-	<table type="3D" name="Ignition Retard - ASC" category="Special Functions/Thresholds" storagetype="uint8"  userlevel="1" sizex="4" sizey="4" >
-		<scaling units="&deg;CRK" expression="(x-128)*.375" to_byte="x/.375+128" format="0.00" fineincrement=".5" coarseincrement="5" />
-			<table type="X Axis" name="Load" storagetype="uint8" logparam="E2" >
-				<scaling units="mg/stroke [Limit = 1389]" expression="x*(1389/255)" to_byte="x/(1389/255)" format="0" fineincrement="5" coarseincrement="50" />
-			</table>
-			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8" >
-				<scaling units="RPM" expression="x*32" to_byte="x/32" format="0" fineincrement="30" coarseincrement="300" />
-			</table>
-		<description>NEEDS TESTING - This table retards Ignition Timing if requested by the ASC module.</description>
-	</table> 
-
-<!--Limiters-->	 
-	<table type="2D" name="Vehicle Speed Limit" category="Limiters" storagetype="uint8"  userlevel="1" sizey="1" >
-		<scaling units="kph" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10" />
-			<table type="Static Y Axis" name=" " sizey="1">
-				<data>Vehicle Speed Limit</data>
-			</table>
-		<description>C_VS_MAX - If Vehicle Speed is less than or equal to this value, Vehicle Speed is not limited. This means if you set this to its maximum value of 255, the Vehicle Speed Limit is completely disabled.</description>
-	</table>
-	
 	<table type="2D" name="Vehicle Speed Correction (ECU)" category="Limiters" storagetype="uint16" endian="little"  userlevel="1" sizey="1" >
 		<scaling units="raw" expression="x" to_byte="x" format="0" fineincrement="1" coarseincrement="10" />
 			<table type="Static Y Axis" name=" " sizey="1">
@@ -2279,39 +2259,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 	  !!! if STOCK 1024 KG/HR MAF MODE then VALUES WILL READ TWICE AS HIGH AS ACTUAL !!!
 		</description>
 	</table>
-
-<!--Forced Induction-->
-	<table type="2D" name="MAF Plausibility Check - Low RPM Threshold" category="Forced Induction" storagetype="uint8" sizey="1" userlevel="1">
-		<scaling units="RPM" expression="x*32" to_byte="x/32"  format="0" fineincrement="50" coarseincrement="500" />
-			<table type="Static Y Axis" name="if Engine Speed is less than this value, MAF Plausibility Check will be ignored" sizey="1">
-				<data>Low RPM Threshold</data>
-			</table>
-		<description>The ECU runs through a section of code to check for TPS and/or MAF plausibility to detect sensor errors that aren't due to simple disconnects. The ECU has a rough Alpha N map that knows how RPM, TPS, and MAF should relate to one another. If sensor readings fall outside of this range, it will throw a code for plausibility. For example, at 25% Throttle at 3400RPM, you can have a situation where the turbo has spooled up and is generating a lot of airflow. This would never happen in an NA engine so the ECU sees this extra air read by the MAF sensor and thinks something is wrong. But it only checks for this in a narrow window of RPM between 1504 and 3488 and TPS between 13% and 30% in stock form. We can change these thresholds to fool the ECU into never running this code by changing the RPM thresholds.</description>
-	</table> 
-	
-	<table type="2D" name="MAF Plausibility Check - High RPM Threshold" category="Forced Induction" storagetype="uint8" sizey="1" userlevel="1">
-		<scaling units="RPM" expression="x*32" to_byte="x/32"  format="0" fineincrement="50" coarseincrement="500" />
-			<table type="Static Y Axis" name="if Engine Speed is more than this value, MAF Plausibility Check will be ignored" sizey="1">
-				<data>High RPM Threshold</data>
-			</table>
-		<description>The ECU runs through a section of code to check for TPS and/or MAF plausibility to detect sensor errors that aren't due to simple disconnects. The ECU has a rough Alpha N map that knows how RPM, TPS, and MAF should relate to one another. If sensor readings fall outside of this range, it will throw a code for plausibility. For example, at 25% Throttle at 3400RPM, you can have a situation where the turbo has spooled up and is generating a lot of airflow. This would never happen in an NA engine so the ECU sees this extra air read by the MAF sensor and thinks something is wrong. But it only checks for this in a narrow window of RPM between 1504 and 3488 and TPS between 13% and 30% in stock form. We can change these thresholds to fool the ECU into never running this code by changing the RPM thresholds.</description>
-	</table> 
-
-	<table type="2D" name="Minimum Mass Air Threshold for MAF Error" category="Forced Induction" storagetype="uint8" sizey="1" userlevel="1">
-		<scaling units="RPM" expression="x*5.45" to_byte="x/5.45"  format="0.00" fineincrement="50" coarseincrement="500" />
-			<table type="Static Y Axis" name="if air mass is less than this value, short to ground diagnostic error will occur" sizey="1">
-				<data>mg/stroke</data>
-			</table>
-		<description> LM_MIN_DIAG: When using a different MAF, you can enter substitude mode without noticing. LM_MIN gets triggered when using the RS4 MAF map and default value of 5.45, since it reads 0kg/h whenever there is backflow. To avoid this, everything in the MAF table with 0.00 needs to be 1.4 or something like that and LM_MIN set to 1.0 or you disable short to ground diagnostic path by setting LM_MIN to 0.0</description>
-	</table> 
-
-	<table type="2D" name="Maximum Mass Air Threshold for MAF Error" category="Forced Induction" storagetype="uint8" sizey="1" userlevel="1">
-		<scaling units="RPM" expression="x*5.45" to_byte="x/5.45"  format="0.00" fineincrement="50" coarseincrement="500" />
-			<table type="Static Y Axis" name="if air mass is greater than this value, short to battery diagnostic error will occur" sizey="1">
-				<data>mg/stroke</data>
-			</table>
-		<description> LM_MAX_DIAG: Use this to extend the maximum load value all the way to 1389 as necessary with forced induction setups.</description>
-	</table> 
 
 <!--Knock-->
 	<table type="3D" name="Knock Detection - Min. Load" category="Knock" storagetype="uint8" sizex="4" sizey="8" userlevel="2" >
@@ -2829,14 +2776,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 		<state name="[TEST] STOCK ECU ID = 1406464"  data="31 34 30 36 34 36 34" /> 1406464
 	</table>
 	
-	<table type="Switch" name="*** DO NOT FLASH FILE : Boost Control PWM Logic Error***" category="*** CUSTOM  MS41.3  FEATURES BELOW ***" sizey="2" userlevel="5" storageaddress="0x343C">
-		<state name="If this table displays a warning upon loading the ROM, the Calibration file does not match the MS41 Definitions. Do not flash this file."  data="00 34" />
-	</table>
-	
-	<table type="Switch" name="*** DO NOT FLASH FILE : FlexFuel Logic Error ***" category="*** CUSTOM  MS41.3  FEATURES BELOW ***" sizey="2" userlevel="5" storageaddress="0x33D4">
-		<state name="If this table displays a warning upon loading the ROM, the Calibration file does not match the MS41 Definitions. Do not flash this file."  data="6E 35" />
-	</table>
-	
 	<table type="Switch" name="*** Extended Base Fuel and Timing Maps : Disabled ***" category="*** CUSTOM  MS41.3  FEATURES BELOW ***" sizey="4" userlevel="5" storageaddress="0xE7A">
 		<state name="If this table displays a warning upon loading the ROM, DO NOT FLASH this file IF you have previously flashed SS1 MS41 20200403.enc or greater, else ECU may brick or cause ENGINE damage! Else, tune the stock Base Fuel and Timing tables because Extended tables are disabled, if this button is grey."  data="60 36 36 36" />
 	</table>
@@ -3307,61 +3246,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 		<description>If Fuel Pressure is less than Target, flash CEL.</description>
 	</table>
 
-	<table type="Switch" name="FlexFuel - Input Select" category="FlexFuel" sizey="2" storageaddress="0x33CA">
-		<state name="[Disabled]"  data="FF FF" />
-		<state name="TPS Volts" 		data="DA E8" />
-		<state name="TPS Volts Bas" 	data="A2 FA" />
-		<state name="Rear O2 Bank 1" data="96 FA" />
-		<state name="Rear O2 Bank 2" data="94 FA" />
-		<state name="Front O2 Bank 2" data="98 FA" />
-		<state name="Front O2 Bank 1" data="9A FA" />	
-		<state name="Evap. Pressure" data="A8 F5" />
-		<description>Select sensor input. Also enables FlexFuel Logic. Only enable if you have correctly wired and installed the FlexFuel Content Sensor. Else, the ECU will enrich based on the FlexFuel - Fuel Trim table incorrectly.
-
-	If you just want to datalog your ECS, set all values in FlexFuel - Fuel Trim table to 0.
-
-	The Default values are an approximate baseline when used with a properly functioning ECS system.</description>
-	</table>
-	
-	<table type="2D" name="FlexFuel Sensor Scaling" category="FlexFuel" storagetype="uint8" sizey="2" storageaddress="0x33D2">
-		<scaling units="%" expression="x*(100/255)" to_byte="x/(100/255)" format="0.0" fineincrement=".4" coarseincrement="5" />
-			<table type="Y Axis" name="FlexFuel" storagetype="uint8" storageaddress="0x33CE">
-				<scaling units="Volts" expression="x*(5/255)" to_byte="x/(5/255)" format="0.00" fineincrement=".02" coarseincrement=".2" />
-			</table>
-	</table>
-	<table type="2D" name="FlexFuel - Fuel Trim" category="FlexFuel" storagetype="uint8" sizey="10" storageaddress="0x3579">
-		<scaling units="Additive % :: Adjusts Fuel IPW during all conditions; Normal and Cranking" expression="(x-128)*(200/255)" to_byte="x/(200/255)+128" format="0.0" fineincrement="1" coarseincrement="5" />
-			<table type="Y Axis" name="FlexFuel" storagetype="uint8" storageaddress="0x356F">
-				<scaling units="%" expression="x*(100/255)" to_byte="x/(100/255)" format="0" fineincrement="1" coarseincrement="5" />
-			</table>
-	</table>
-	
-	<table type="2D" name="FlexFuel - Cranking Fuel Trim" category="FlexFuel" storagetype="uint8" sizey="10" storageaddress="0x358D">
-		<scaling units="Multiplicative % :: Additional modification of 'FF- Fuel Trim' only used during Cranking" expression="(x-128)*(600/255)" to_byte="x/(600/255)+128" format="0.0" fineincrement="2" coarseincrement="10" />
-			<table type="Y Axis" name="Coolant Temperature" storagetype="uint8" logparam="P2" storageaddress="0x3598">
-				<scaling units="&deg;C" expression="x*.75-48" to_byte="(x+48)/.75" format="0" fineincrement="50" coarseincrement="100" />
-			</table>
-	</table>
-	
-	<table type="2D" name="FlexFuel - Ignition Trim" category="FlexFuel" storagetype="uint8" sizey="10" storageaddress="0x3583">
-		<scaling units="Applied % :: This table is multiplied to 'FlexFuel - Ignition Compensation', then added to Ignition Timing" expression="(x)*(100/255)" to_byte="x/(100/255)" format="0.0" fineincrement="1" coarseincrement="5" />
-			<table type="Y Axis" name="FlexFuel" storagetype="uint8" storageaddress="0x356F">
-				<scaling units="%" expression="(x)*(100/255)" to_byte="x/(100/255)" format="0" fineincrement="1" coarseincrement="5" />
-			</table>
-	</table>
-	
-	<table type="3D" name="FlexFuel - Ignition Compensation" category="FlexFuel" storagetype="uint8" sizey="10" sizex="10" storageaddress="0x35B8">	
-	<!--<scaling units="&deg;CRK" expression="(x*.375)" to_byte="(x)/.375" format="0.0" fineincrement=".5" coarseincrement="5" /> ADDB_ONES -->
-		<scaling units="&deg;CRK" expression="(x-128)*.375" to_byte="(x/.375)+128" format="0.0" fineincrement=".5" coarseincrement="5" /> MULB_SignedFactor + Add
-			<table type="X Axis" name="Load" storagetype="uint8" logparam="E2" storageaddress="0x35AE" >
-				<scaling units="mg/stroke *Limit = 1389*" expression="x*(1389/255)" to_byte="x/(1389/255)" format="0" fineincrement="5" coarseincrement="50" />
-			</table>
-			<table type="Y Axis" name="Engine Speed" storagetype="uint8" logparam="P8" storageaddress="0x35A3" >
-			<scaling units="RPM" expression="x*32" to_byte="x/32" format="0" fineincrement="1" coarseincrement="10" />
-			</table>
-	</table>
-
-
 	<table type="Switch" name="Switched Boost Map - Switch Input" category="Boost Control PWM" sizey="1" storageaddress="0x33E4" >
 		<state name="Enabled via ECU Pin 80" data="01" />
 		<state name="Enabled via ECU Pin 81" data="02" />
@@ -3575,12 +3459,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 	
 	<table type="3D" name="Boost PWM - Nominal - Map 2">
 		<table type="X Axis" name="Load" storageaddress="0x3421" >
-			<scaling units="mg/stroke [Limit = 5556]" expression="x*(1389/255)*4" to_byte="x/(1389/255)/4" format="0" fineincrement="20" coarseincrement="100" />
-		</table>
-	</table>
-
-	<table type="3D" name="FlexFuel - Ignition Compensation">
-		<table type="X Axis" name="Load" storageaddress="0x35AE">
 			<scaling units="mg/stroke [Limit = 5556]" expression="x*(1389/255)*4" to_byte="x/(1389/255)/4" format="0" fineincrement="20" coarseincrement="100" />
 		</table>
 	</table>
@@ -4235,11 +4113,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 		<table type="Y Axis" storageaddress="0x891" />
 	</table>
 	
-	<table name="Ignition Retard - ASC" storageaddress="0xF76">
-		<table type="Y Axis" storageaddress="0x879" />
-		<table type="X Axis" storageaddress="0x874" />
-	</table>
-
 <!--Limiters-->	 
 	<table name="Vehicle Speed Limit" storageaddress="0x395" />
 	
@@ -4715,11 +4588,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 		<table type="Y Axis" storageaddress="0x2294"/>
 	</table>
 	
-<!--Forced Induction-->
-	<table name="MAF Plausibility Check - Low RPM Threshold" storageaddress="0x2FE"/>
-	
-	<table name="MAF Plausibility Check - High RPM Threshold" storageaddress="0x2F9"/>
-
 <!--Acceleration-->
 	<table name="Fuel Enrichment - Increasing TPS" storageaddress="0x17A8">
 		<table type="Y Axis" storageaddress="0x1596"/>
@@ -4914,11 +4782,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 	
 	<table name="Dashpot - Decay Limitation" storageaddress="0xA5E">
 		<table type="Y Axis" storageaddress="0x8C1"/>
-	</table>
-
-	<table name="Ignition Retard - ASC" storageaddress="0x106A">
-		<table type="Y Axis" storageaddress="0x8A4"/>
-		<table type="X Axis" storageaddress="0x8A9"/>
 	</table>
 
 <!--Fuel-->
@@ -5777,11 +5640,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 	
 	<table name="Dashpot - Decay Limitation" storageaddress="0x912">
 		<table type="Y Axis" storageaddress="0x775"/>
-	</table>
-
-	<table name="Ignition Retard - ASC" storageaddress="0xF1E">
-		<table type="Y Axis" storageaddress="0x758"/>
-		<table type="X Axis" storageaddress="0x75D"/>
 	</table>	
 	
 <!--Limiters-->
@@ -5820,19 +5678,6 @@ These definitions are created for FREE without any sort of guarantee. The develo
 		<table type="X Axis" storageaddress="0x4E9" />
 	</table>
 	
-<!--Forced Induction-->
-	<table name="MAF Plausibility Check - Low RPM Threshold" storageaddress="0x410" /> 
-	
-	<table name="MAF Plausibility Check - High RPM Threshold" storageaddress="0x411" /> 
-	
-	<table name="MAF Plausibility Check - Low TPS Threshold" storageaddress="0x4C9" /> NOT NEEDED
-	
-	<table name="MAF Plausibility Check - High TPS Threshold" storageaddress="0x4CA" /> NOT NEEDED
-	
-	<table name="Minimum Mass Air Threshold for MAF Error" storageaddress="0x1BA" /> 
-	
-	<table name="Maximum Mass Air Threshold for MAF Error" storageaddress="0x1B6" /> 
-
 <!--Knock-->		 
 	<table name="Knock Detection - Min. Load" storageaddress="0x23B0">
 		<table type="X Axis" storageaddress="0x2387" />
